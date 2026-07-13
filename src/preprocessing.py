@@ -1,44 +1,54 @@
 import pandas as pd
+from typing import List
 
-
-def add_s2_history_features(df: pd.DataFrame) -> pd.DataFrame:
+def add_sensor_history_features(
+    df: pd.DataFrame,
+    sensors: List[str],
+    rolling_window: int = 5,
+    ema_span: int = 5,
+) -> pd.DataFrame:
     """
-    Add leakage-safe historical features for sensor s2.
+    Add leakage-safe historical features for multiple sensors.
 
-    The features are calculated separately for each engine and use
-    only the current cycle and past observations.
+    For every selected sensor, the function creates:
 
-    Added features
-    --------------
-    s2_diff_1:
-        Difference between the current and previous s2 measurement.
+    - one-cycle difference
+    - rolling mean
+    - exponential moving average
+    - expanding mean
 
-    s2_rolling_mean_5:
-        Mean of the current and previous four s2 measurements.
-
-    s2_ema_5:
-        Exponentially weighted moving average with span 5.
-
-    s2_expanding_mean:
-        Mean of all s2 measurements observed up to the current cycle.
+    All calculations are performed separately for each engine and use
+    only the current and previous observations.
 
     Parameters
     ----------
     df:
-        DataFrame containing at least the columns 'id', 'cycle',
-        and 's2'.
+        DataFrame containing 'id', 'cycle', and the selected sensors.
+
+    sensors:
+        List of sensor column names, such as ['s2', 's3', 's4'].
+
+    rolling_window:
+        Number of cycles used for the rolling mean.
+
+    ema_span:
+        Span used for the exponential moving average.
 
     Returns
     -------
     pd.DataFrame
-        A sorted copy of the input DataFrame with the new features.
+        A sorted copy of the input DataFrame with new historical
+        features.
 
     Raises
     ------
     ValueError
-        If any required columns are missing.
+        If required columns are missing or the sensor list is empty.
     """
-    required_columns = {"id", "cycle", "s2"}
+    if not sensors:
+        raise ValueError("At least one sensor must be provided.")
+
+    required_columns = {"id", "cycle"} | set(sensors)
     missing_columns = required_columns - set(df.columns)
 
     if missing_columns:
@@ -46,36 +56,45 @@ def add_s2_history_features(df: pd.DataFrame) -> pd.DataFrame:
             f"Missing required columns: {sorted(missing_columns)}"
         )
 
+    if rolling_window < 1:
+        raise ValueError("rolling_window must be at least 1.")
+
+    if ema_span < 1:
+        raise ValueError("ema_span must be at least 1.")
+
     result = df.sort_values(["id", "cycle"]).copy()
 
-    grouped_s2 = result.groupby("id")["s2"]
+    for sensor in sensors:
+        grouped_sensor = result.groupby("id")[sensor]
 
-    result["s2_diff_1"] = (
-        grouped_s2.diff().fillna(0)
-    )
-
-    result["s2_rolling_mean_5"] = (
-        grouped_s2
-        .rolling(window=5, min_periods=1)
-        .mean()
-        .reset_index(level=0, drop=True)
-    )
-
-    result["s2_ema_5"] = (
-        grouped_s2
-        .transform(
-            lambda sensor: sensor.ewm(
-                span=5,
-                adjust=False
-            ).mean()
+        result[f"{sensor}_diff_1"] = (
+            grouped_sensor.diff().fillna(0)
         )
-    )
 
-    result["s2_expanding_mean"] = (
-        grouped_s2
-        .expanding(min_periods=1)
-        .mean()
-        .reset_index(level=0, drop=True)
-    )
+        result[f"{sensor}_rolling_mean_{rolling_window}"] = (
+            grouped_sensor
+            .rolling(
+                window=rolling_window,
+                min_periods=1
+            )
+            .mean()
+            .reset_index(level=0, drop=True)
+        )
+
+        result[f"{sensor}_ema_{ema_span}"] = (
+            grouped_sensor.transform(
+                lambda values: values.ewm(
+                    span=ema_span,
+                    adjust=False
+                ).mean()
+            )
+        )
+
+        result[f"{sensor}_expanding_mean"] = (
+            grouped_sensor
+            .expanding(min_periods=1)
+            .mean()
+            .reset_index(level=0, drop=True)
+        )
 
     return result
