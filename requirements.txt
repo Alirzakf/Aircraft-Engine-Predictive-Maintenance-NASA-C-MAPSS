@@ -5,3 +5,11 @@ seaborn>=0.13
 scikit-learn>=1.5
 jupyterlab>=4.0
 pytest>=8.4, <9
+xgboost==2.1.4
+
+### macOS requirement for XGBoost
+
+XGBoost requires the OpenMP runtime on macOS:
+
+```bash
+brew install libomp
