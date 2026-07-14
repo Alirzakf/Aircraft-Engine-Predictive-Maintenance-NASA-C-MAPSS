@@ -1,6 +1,6 @@
 from typing import List
-
 import pandas as pd
+from src.config import NEAR_CONSTANT_VARIANCE_THRESHOLD
 
 
 def calculate_sensor_variance(
@@ -44,7 +44,7 @@ def calculate_sensor_variance(
 def find_low_variance_sensors(
     df: pd.DataFrame,
     sensors: List[str],
-    threshold: float = 1e-10,
+    threshold: float = NEAR_CONSTANT_VARIANCE_THRESHOLD,
 ) -> List[str]:
     """
     Identify sensors whose variance is below a selected threshold.

@@ -6,6 +6,8 @@ from src.sensor_utils import (
     find_low_variance_sensors,
 )
 
+from src.config import NEAR_CONSTANT_VARIANCE_THRESHOLD
+
 
 def make_sensor_data() -> pd.DataFrame:
     return pd.DataFrame(
@@ -52,3 +54,14 @@ def test_negative_threshold_raises_error() -> None:
             sensors=["s1"],
             threshold=-1,
         )
+
+def test_default_threshold_follows_project_config() -> None:
+    df = make_sensor_data()
+
+    result = find_low_variance_sensors(
+        df,
+        sensors=["s1", "s2", "s3"],
+    )
+
+    assert NEAR_CONSTANT_VARIANCE_THRESHOLD == 1e-10
+    assert set(result) == {"s1", "s3"}

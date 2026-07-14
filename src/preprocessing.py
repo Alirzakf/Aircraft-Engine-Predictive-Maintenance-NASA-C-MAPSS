@@ -1,11 +1,12 @@
 import pandas as pd
 from typing import List
+from src.config import EMA_SPAN, ROLLING_WINDOW
 
 def add_sensor_history_features(
     df: pd.DataFrame,
     sensors: List[str],
-    rolling_window: int = 5,
-    ema_span: int = 5,
+    rolling_window: int = ROLLING_WINDOW,
+    ema_span: int = EMA_SPAN,
 ) -> pd.DataFrame:
     """
     Add leakage-safe historical features for multiple sensors.

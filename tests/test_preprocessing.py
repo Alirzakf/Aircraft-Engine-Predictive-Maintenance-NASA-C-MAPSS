@@ -11,6 +11,7 @@ FEATURE_COLUMNS = [
     "s2_expanding_mean",
 ]
 
+from src.config import EMA_SPAN, ROLLING_WINDOW
 
 def make_sample_sensor_data() -> pd.DataFrame:
     return pd.DataFrame(
@@ -151,3 +152,14 @@ def test_invalid_window_raises_error() -> None:
             sensors=["s2"],
             rolling_window=0,
         )
+        
+def test_default_feature_names_follow_project_config() -> None:
+    df = make_sample_sensor_data()
+
+    result = add_sensor_history_features(
+        df,
+        sensors=["s2"],
+    )
+
+    assert f"s2_rolling_mean_{ROLLING_WINDOW}" in result.columns
+    assert f"s2_ema_{EMA_SPAN}" in result.columns
