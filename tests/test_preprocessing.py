@@ -1,17 +1,23 @@
+from typing import List
+
 import pandas as pd
 import pytest
 
+from src.config import EMA_SPAN, ROLLING_WINDOW
 from src.preprocessing import add_sensor_history_features
 
 
-FEATURE_COLUMNS = [
-    "s2_diff_1",
-    "s2_rolling_mean_5",
-    "s2_ema_5",
-    "s2_expanding_mean",
-]
+def build_s2_feature_columns(
+    rolling_window: int,
+    ema_span: int,
+) -> List[str]:
+    return [
+        "s2_diff_1",
+        f"s2_rolling_mean_{rolling_window}",
+        f"s2_ema_{ema_span}",
+        "s2_expanding_mean",
+    ]
 
-from src.config import EMA_SPAN, ROLLING_WINDOW
 
 def make_sample_sensor_data() -> pd.DataFrame:
     return pd.DataFrame(
@@ -33,16 +39,31 @@ def test_expected_history_features_are_created() -> None:
         ema_span=5,
     )
 
-    for column in FEATURE_COLUMNS:
+    expected_features = build_s2_feature_columns(
+        rolling_window=5,
+        ema_span=5,
+    )
+
+    for column in expected_features:
         assert column in result.columns
 
 
 def test_history_features_have_no_missing_values() -> None:
     df = make_sample_sensor_data()
 
-    result = add_sensor_history_features(df, sensors=["s2"])
+    result = add_sensor_history_features(
+        df,
+        sensors=["s2"],
+    )
 
-    assert result[FEATURE_COLUMNS].isna().sum().sum() == 0
+    feature_columns = build_s2_feature_columns(
+        rolling_window=ROLLING_WINDOW,
+        ema_span=EMA_SPAN,
+    )
+
+    assert result[
+        feature_columns
+    ].isna().sum().sum() == 0
 
 
 def test_first_difference_resets_for_each_engine() -> None:
@@ -85,6 +106,11 @@ def test_future_rows_do_not_change_past_features() -> None:
     Features calculated at cycle 3 must be identical whether the
     function sees only cycles 1-3 or the complete future history.
     """
+    leakage_test_features = build_s2_feature_columns(
+        rolling_window=5,
+        ema_span=5,
+)
+    
     full_history = pd.DataFrame(
         {
             "id": [1, 1, 1, 1, 1, 1],
@@ -114,13 +140,15 @@ def test_future_rows_do_not_change_past_features() -> None:
     full_past_features = (
         full_result.loc[
             full_result["cycle"] <= 3,
-            FEATURE_COLUMNS,
+            leakage_test_features,
         ]
         .reset_index(drop=True)
     )
 
     truncated_features = (
-        truncated_result[FEATURE_COLUMNS]
+        truncated_result[
+            leakage_test_features
+        ]
         .reset_index(drop=True)
     )
 
@@ -152,6 +180,7 @@ def test_invalid_window_raises_error() -> None:
             sensors=["s2"],
             rolling_window=0,
         )
+
         
 def test_default_feature_names_follow_project_config() -> None:
     df = make_sample_sensor_data()

@@ -1,10 +1,12 @@
 """
-Central configuration for baseline project parameters.
+Central configuration for the finalized modeling pipeline.
 
-These values are initial defaults for the exploratory and baseline
-modeling stages. They may later be evaluated and tuned experimentally.
+The temporal feature parameters and RUL cap were selected through
+controlled ablation experiments in Notebook 06.
 """
 
-ROLLING_WINDOW = 5
-EMA_SPAN = 5
+ROLLING_WINDOW = 10
+EMA_SPAN = 10
+
+RUL_CAP = 125
 NEAR_CONSTANT_VARIANCE_THRESHOLD = 1e-10

@@ -1,12 +1,11 @@
 import pandas as pd
 import pytest
 
+from src.config import NEAR_CONSTANT_VARIANCE_THRESHOLD
 from src.sensor_utils import (
     calculate_sensor_variance,
     find_low_variance_sensors,
 )
-
-from src.config import NEAR_CONSTANT_VARIANCE_THRESHOLD
 
 
 def make_sensor_data() -> pd.DataFrame:
@@ -54,6 +53,7 @@ def test_negative_threshold_raises_error() -> None:
             sensors=["s1"],
             threshold=-1,
         )
+
 
 def test_default_threshold_follows_project_config() -> None:
     df = make_sensor_data()

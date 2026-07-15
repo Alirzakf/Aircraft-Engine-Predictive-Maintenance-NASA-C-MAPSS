@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: >-
+  If you use this repository, its code, methodology, experiments,
+  figures, or results in academic or educational work, please cite it.
+title: Aircraft Engine Predictive Maintenance using NASA C-MAPSS
+type: software
+authors:
+  - family-names: Kafi
+    given-names: Alireza
+year: 2026
+license: PolyForm-Noncommercial-1.0.0
+repository-code: https://github.com/Alirzakf/Aircraft-Engine-Predictive-Maintenance-NASA-C-MAPSS
+keywords:
+  - predictive maintenance
+  - remaining useful life
+  - NASA C-MAPSS
+  - turbofan engine
+  - machine learning
+  - data science
+  - prognostics

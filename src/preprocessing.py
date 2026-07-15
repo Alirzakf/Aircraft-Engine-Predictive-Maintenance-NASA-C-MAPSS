@@ -1,5 +1,7 @@
-import pandas as pd
 from typing import List
+
+import pandas as pd
+
 from src.config import EMA_SPAN, ROLLING_WINDOW
 
 def add_sensor_history_features(
@@ -76,7 +78,7 @@ def add_sensor_history_features(
             grouped_sensor
             .rolling(
                 window=rolling_window,
-                min_periods=1
+                min_periods=1,
             )
             .mean()
             .reset_index(level=0, drop=True)
@@ -86,7 +88,7 @@ def add_sensor_history_features(
             grouped_sensor.transform(
                 lambda values: values.ewm(
                     span=ema_span,
-                    adjust=False
+                    adjust=False,
                 ).mean()
             )
         )

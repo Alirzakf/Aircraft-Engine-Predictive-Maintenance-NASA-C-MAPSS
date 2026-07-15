@@ -60,3 +60,76 @@ def test_missing_required_column_raises_error() -> None:
 
     with pytest.raises(ValueError, match="Missing required columns"):
         add_train_rul(df)
+        
+
+def test_capped_rul_limits_large_values() -> None:
+    df = pd.DataFrame(
+        {
+            "id": [1, 1, 1, 1],
+            "cycle": [1, 2, 3, 200],
+        }
+    )
+
+    result = add_train_rul(
+        df,
+        rul_cap=125,
+    )
+
+    assert result["RUL"].tolist() == [
+        125,
+        125,
+        125,
+        0,
+    ]
+
+
+def test_capped_rul_preserves_values_below_cap() -> None:
+    df = make_sample_engine_data()
+
+    linear_result = add_train_rul(df)
+
+    capped_result = add_train_rul(
+        df,
+        rul_cap=125,
+    )
+
+    pd.testing.assert_series_equal(
+        linear_result["RUL"],
+        capped_result["RUL"],
+    )
+
+
+def test_capped_rul_never_exceeds_cap() -> None:
+    df = pd.DataFrame(
+        {
+            "id": [1, 1, 1],
+            "cycle": [1, 50, 200],
+        }
+    )
+
+    result = add_train_rul(
+        df,
+        rul_cap=125,
+    )
+
+    assert result["RUL"].max() == 125
+    assert (result["RUL"] <= 125).all()
+
+
+@pytest.mark.parametrize(
+    "invalid_cap",
+    [0, -1, -125],
+)
+def test_invalid_rul_cap_raises_error(
+    invalid_cap: int,
+) -> None:
+    df = make_sample_engine_data()
+
+    with pytest.raises(
+        ValueError,
+        match="rul_cap must be a positive integer or None",
+    ):
+        add_train_rul(
+            df,
+            rul_cap=invalid_cap,
+        )
