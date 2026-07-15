@@ -46,6 +46,19 @@ outputs/ → visualizations and reports
 
 ---
 
+## Requirments
+
+### macOS requirement for XGBoost
+
+XGBoost requires the OpenMP runtime on macOS.
+
+Install it with Homebrew:
+
+```bash
+brew install libomp
+
+---
+
 ## Status
 
 This project is actively developed as a learning project.
