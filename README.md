@@ -8,11 +8,10 @@ The project focuses on reproducible experimentation, leakage-safe
 feature engineering, engine-level validation, interpretable model
 comparison, and scientifically justified modeling decisions.
 
-![Tests](https://github.com/<username>/<repo>/actions/workflows/tests.yml/badge.svg)
-
 ![Python](https://img.shields.io/badge/Python-3.9-blue)
-
+[![Tests](https://github.com/Alirzakf/Aircraft-Engine-Predictive-Maintenance-NASA-C-MAPSS/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Alirzakf/Aircraft-Engine-Predictive-Maintenance-NASA-C-MAPSS/actions/workflows/tests.yml)
 ![Status](https://img.shields.io/badge/status-active-success)
+![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial-orange)
 
 > **License Notice**
 >
