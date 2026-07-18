@@ -143,9 +143,9 @@ where:
 The final project uses a capped target:
 
 $$
-RUL_{capped}
+\mathrm{RUL}_{\text{capped}}
 =
-\min(RUL_{linear},125)
+\min\left(\mathrm{RUL}_{\text{linear}},\,125\right)
 $$
 
 The cap represents an early healthy operating region where sensor
@@ -219,7 +219,9 @@ The first-order difference measures the short-term change between
 consecutive operating cycles.
 
 $$
-\Delta x_t=x_t-x_{t-1}
+\Delta x_t
+=
+x_t-x_{t-1}
 $$
 
 This feature captures sudden sensor changes that may indicate the
@@ -234,14 +236,14 @@ The rolling mean estimates the recent local operating trend.
 $$
 \bar{x}_t^{(w)}
 =
-\frac1{m_t}
+\frac{1}{m_t}
 \sum_{k=\max(1,t-w+1)}^{t}x_k
 $$
 
 where
 
-- $begin:math:text$w$end:math:text$ is the rolling window size,
-- $begin:math:text$m\_t$end:math:text$ is the number of available observations inside the window.
+- $w$ is the rolling window size.
+- $m_t$ is the number of available observations inside the window.
 
 The finalized project uses
 
@@ -291,7 +293,7 @@ The expanding mean summarizes the cumulative operating history.
 $$
 \bar{x}_t^{exp}
 =
-\frac1t
+\frac{1}{t}
 \sum_{k=1}^{t}x_k
 $$
 
@@ -496,12 +498,14 @@ are reported.
 The constrained prediction is
 
 $$
-\hat{RUL}_{constrained}
+\hat{\mathrm{RUL}}_{\text{constrained}}
 =
-\min
-\left(
+\min\left(
 125,
-\max(0,\hat{RUL})
+\max\left(
+0,
+\hat{\mathrm{RUL}}
+\right)
 \right)
 $$
 
@@ -588,7 +592,10 @@ The finalized project uses
 $$
 RUL_{capped}
 =
-\min(RUL_{linear},125)
+\min\left(
+\mathrm{RUL}_{\text{linear}},
+125
+\right)
 $$
 
 Approximately **39%** of the FD001 training observations are affected
