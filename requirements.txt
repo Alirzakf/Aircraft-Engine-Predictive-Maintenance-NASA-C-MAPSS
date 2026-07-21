@@ -5,4 +5,6 @@ seaborn>=0.13
 scikit-learn>=1.5
 jupyterlab>=4.0
 pytest>=8.4,<9
+joblib>=1.5
 xgboost==2.1.4
+shap>=0.49
