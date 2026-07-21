@@ -343,11 +343,11 @@ The final cycle is used only to construct the target. It is not kept as an input
 
 The final project target is:
 
-$$
+```math
 \mathrm{RUL}_{i,t}^{\text{capped}}
 =
 \min\left(\mathrm{RUL}_{i,t}^{\text{linear}}, 125\right)
-$$
+```
 
 The cap treats the early healthy region as a plateau rather than asking the model to distinguish among very large RUL values that are weakly supported by degradation signals.
 
@@ -396,12 +396,12 @@ The first difference of each engine is filled with zero because no earlier obser
 
 For a window of width $w$:
 
-$$
+```math
 \bar{x}_{t}^{(w)}
 =
 \frac{1}{m_t}
 \sum_{k=\max(1,\,t-w+1)}^{t} x_k
-$$
+```
 
 where $m_t$ is the number of available observations in the partial or full window. The implementation uses `min_periods=1`, so early cycles do not produce missing values.
 
@@ -413,11 +413,11 @@ $$
 
 ### Exponential moving average
 
-$$
+```math
 \mathrm{EMA}_t
 =
 \alpha x_t + (1-\alpha)\mathrm{EMA}_{t-1}
-$$
+```
 
 with:
 
@@ -433,12 +433,12 @@ $$
 
 ### Expanding mean
 
-$$
+```math
 \bar{x}_{t}^{\text{exp}}
 =
 \frac{1}{t}
 \sum_{k=1}^{t} x_k
-$$
+```
 
 ### Causality guarantees
 
@@ -530,11 +530,15 @@ random_state = 42
 
 Because the project target is bounded, constrained predictions are defined as:
 
-$$
-\widehat{\mathrm{RUL}}_{\text{constrained}}
+```math
+
+\widehat{\mathrm{RUL}}_{\mathrm{constrained}}
+
 =
+
 \min\left(125,\max\left(0,\widehat{\mathrm{RUL}}\right)\right)
-$$
+
+```
 
 Clipping produced only small validation improvements. On the official test endpoints, the selected Histogram Gradient Boosting model produced no values below zero or above 125.
 
